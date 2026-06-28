@@ -1,0 +1,8 @@
+{
+  "mcp_servers": {
+    "memory": {
+      "command": "${PLUGIN_ROOT}/bin/atlaso-memory-mcp",
+      "args": []
+    }
+  }
+}

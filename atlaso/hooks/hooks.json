@@ -1,0 +1,40 @@
+{
+  "hooks": {
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"${PLUGIN_ROOT}\"/hooks/recall.sh",
+            "commandWindows": "bash \"%PLUGIN_ROOT%\\hooks\\recall.sh\"",
+            "timeout": 15,
+            "statusMessage": "Atlaso · recalling memory…"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"${PLUGIN_ROOT}\"/hooks/capture.sh",
+            "commandWindows": "bash \"%PLUGIN_ROOT%\\hooks\\capture.sh\"",
+            "timeout": 30
+          }
+        ]
+      }
+    ],
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"${PLUGIN_ROOT}\"/hooks/start.sh",
+            "commandWindows": "bash \"%PLUGIN_ROOT%\\hooks\\start.sh\""
+          }
+        ]
+      }
+    ]
+  }
+}

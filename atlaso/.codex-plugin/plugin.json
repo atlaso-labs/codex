@@ -1,0 +1,29 @@
+{
+  "name": "atlaso",
+  "version": "0.1.0",
+  "description": "Automatic long-term memory for Codex — recalls relevant context every turn, captures what matters, and syncs across sessions and devices.",
+  "author": { "name": "Emergence Labs" },
+  "homepage": "https://atlaso.ai",
+  "repository": "https://github.com/atlaso-labs/codex",
+  "license": "MIT",
+  "keywords": ["memory", "atlaso", "recall", "second-brain"],
+  "skills": "./skills/",
+  "mcpServers": "./.mcp.json",
+  "hooks": "./hooks/hooks.json",
+  "interface": {
+    "displayName": "Atlaso Memory",
+    "shortDescription": "Automatic long-term memory for Codex",
+    "longDescription": "Atlaso gives Codex a persistent memory: it recalls relevant context before each prompt, captures durable facts and decisions as you work, and syncs across your sessions and devices. Memory works locally even offline; sign in to sync to the cloud.",
+    "developerName": "Emergence Labs",
+    "category": "Productivity",
+    "websiteURL": "https://atlaso.ai",
+    "logo": "./assets/logo.png",
+    "composerIcon": "./assets/logo.png",
+    "brandColor": "#171717",
+    "defaultPrompt": [
+      "What do you remember about this project?",
+      "Remember this: we use pnpm, never npm.",
+      "What did we decide earlier about this?"
+    ]
+  }
+}

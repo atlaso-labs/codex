@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+# Atlaso Memory MCP server launcher (the `memory` server) for Codex. Dual-mode:
+#   built/installed → vendored runtime/ on a uv-managed Python (self-contained)
+#   dev/in-repo     → the SDK venv + platform siblings
+#
+# Registered in .mcp.json as the stdio command for the `memory` MCP server, so it
+# works identically for the Codex CLI, IDE extension, and Desktop (they share
+# ~/.codex/config.toml).
+set -uo pipefail
+
+HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+PLUGIN_DIR="$(cd "$HERE/.." && pwd)"
+
+if [ -d "$PLUGIN_DIR/runtime" ]; then
+  command -v uv >/dev/null 2>&1 || { echo "atlaso-mcp: uv is required to run the memory server" >&2; exit 1; }
+  cd "$PLUGIN_DIR/runtime" && exec uv run --quiet python -m atlaso_mcp
+else
+  PLATFORM="$(cd "$PLUGIN_DIR/../.." && pwd)"
+  PY="${ATLASO_PY:-$PLATFORM/sdk/.venv/bin/python}"
+  [ -x "$PY" ] || { echo "atlaso-mcp: python interpreter not found at $PY" >&2; exit 1; }
+  exec env PYTHONPATH="$PLATFORM/mcp:$PLATFORM/client${PYTHONPATH:+:$PYTHONPATH}" "$PY" -m atlaso_mcp
+fi
