@@ -52,11 +52,14 @@ def make_client():
 
 def maybe_autoconnect() -> bool:
     """If this machine isn't connected yet, spawn the (detached) browser-authorize
-    flow. Fast + best-effort — never blocks the hook, never raises."""
+    flow. Fast + best-effort — never blocks the hook, never raises. Passes THIS
+    tool's id so /v1/device/start carries it → the authorize page shows "Codex CLI
+    wants to connect" (name + logo) and the server wires the tool onto the device
+    (token tool scope + active_tool + device_tools) at approve time."""
     try:
         from atlaso_client.connect import maybe_autoconnect as _mc
 
-        return _mc()
+        return _mc(TOOL)
     except Exception:
         return False
 
