@@ -1,8 +1,9 @@
 {
-  "mcp_servers": {
+  "mcpServers": {
     "memory": {
-      "command": "${PLUGIN_ROOT}/bin/atlaso-memory-mcp",
-      "args": []
+      "command": "bash",
+      "args": ["./bin/atlaso-memory-mcp"],
+      "cwd": "."
     }
   }
 }

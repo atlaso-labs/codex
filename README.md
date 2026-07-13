@@ -63,4 +63,4 @@ A past Desktop update temporarily stopped hooks from firing ([openai/codex#21639
 
 ---
 
-Built by [Emergence Labs](https://atlaso.ai) · source: [github.com/atlaso-labs/codex](https://github.com/atlaso-labs/codex)
+Built by [Atlaso Labs Inc.](https://atlaso.ai) · source: [github.com/atlaso-labs/codex](https://github.com/atlaso-labs/codex)
