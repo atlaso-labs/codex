@@ -66,10 +66,17 @@ def run(payload: dict, client) -> bool:
     return bool(res.get("saved"))
 
 
-def _flush_detached() -> None:
+def _flush_detached(client=None) -> None:
     """Kick off a background sync (the end-of-turn flush, since Codex has no
-    SessionEnd). Detached + best-effort — never blocks or breaks the turn."""
+    SessionEnd). DEBOUNCED via the shared flush heuristics when a client is
+    provided (outbox non-empty, no in-flight lease, 30s spacing — with force
+    triggers on queue depth/age), so per-turn Stop doesn't spawn a uv process
+    for nothing. Detached + best-effort — never blocks or breaks the turn."""
     try:
+        if client is not None:
+            from atlaso_client import _flush
+            if not _flush.should_flush(client.cache):
+                return
         subprocess.Popen(
             [sys.executable, "-m", "atlaso_codex.sync"],
             stdin=subprocess.DEVNULL,
@@ -93,6 +100,9 @@ def main() -> int:
     try:
         saved = run(payload, client)
         _shim.log("capture", f"saved={saved}")
+        # End-of-turn flush (no SessionEnd in Codex) — detached + debounced,
+        # decided while the client (and its cache handle) is still open.
+        _flush_detached(client)
     except Exception as e:
         _shim.log("capture", f"error {e!r}")
     finally:
@@ -100,8 +110,6 @@ def main() -> int:
             client.close()
         except Exception:
             pass
-    # End-of-turn flush (no SessionEnd in Codex) — detached, after the local write.
-    _flush_detached()
     return 0
 
 

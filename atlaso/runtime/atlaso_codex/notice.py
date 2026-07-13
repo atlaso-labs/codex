@@ -54,7 +54,9 @@ def build_message(mode: dict) -> str | None:
     if mode.get("mode") != "local_only":
         return None
     reason = mode.get("reason")
-    if reason == "revoked":
+    # "revoked" is the legacy spelling; the client now writes the precise
+    # auth_rejected / reconnect_required — all three deserve the banner.
+    if reason in ("revoked", "auth_rejected", "reconnect_required"):
         return (
             "Atlaso · this device was disconnected — running in local-only mode. "
             "Your memory still works locally; reconnect at " + _APP + " to resume "

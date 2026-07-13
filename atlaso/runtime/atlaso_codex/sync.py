@@ -19,20 +19,26 @@ def run(client) -> dict:
 def main() -> int:
     # Also kick off connect if this machine isn't linked yet.
     _shim.maybe_autoconnect()
-    try:
-        client = _shim.make_client()
-    except Exception:
-        return 0
-    try:
-        out = run(client)
-        _shim.log("sync", f"{out}")
-    except Exception as e:
-        _shim.log("sync", f"error {e!r}")
-    finally:
+    # Sync lease: Codex + Claude Code share one cache/outbox on a machine; a fresh
+    # lease means another sync is already in flight — skip instead of stampeding.
+    from atlaso_client import _flush
+    with _flush.lease() as acquired:
+        if not acquired:
+            return 0
         try:
-            client.close()
+            client = _shim.make_client()
         except Exception:
-            pass
+            return 0
+        try:
+            out = run(client)
+            _shim.log("sync", f"{out}")
+        except Exception as e:
+            _shim.log("sync", f"error {e!r}")
+        finally:
+            try:
+                client.close()
+            except Exception:
+                pass
     return 0
 
 
