@@ -7,6 +7,12 @@ message-object shapes:
 
   {"type": "user"|"assistant"|..., "message": {"content": ...}}   (Claude-Code-like)
   {"role": "user"|"assistant"|..., "content": ...}                (chat-style)
+  {"type": "response_item", "payload": {"type": "message", "role": ..., "content": [...]}}
+                                                    (Codex rollout envelope — the
+                                                     REAL on-disk format; verified
+                                                     live 2026-07-13. Missing this
+                                                     unwrap made every Codex
+                                                     capture come back empty.)
 
 ``content`` may be a plain string or a list of blocks; only text blocks
 (``{"type":"text","text":...}`` or ``{"type":"input_text"/"output_text"}``) carry
@@ -52,6 +58,17 @@ def _flatten(content: object) -> str:
     return ""
 
 
+def _unwrap(obj: dict) -> dict:
+    """Descend into Codex's rollout envelope. Every session line is
+    {"type":"response_item","payload":{...}} (or session_meta/event_msg/...);
+    the actual message — with role + content — lives one level down under
+    ``payload`` when its type is "message". Non-envelope shapes pass through."""
+    p = obj.get("payload")
+    if isinstance(p, dict) and p.get("type") == "message":
+        return p
+    return obj
+
+
 def _role(obj: dict) -> str:
     """Normalise role across the two shapes: prefer 'role', fall back to 'type'."""
     r = obj.get("role") or obj.get("type") or ""
@@ -86,6 +103,7 @@ def last_exchange(path: str) -> tuple[str, str]:
                     continue
                 if not isinstance(obj, dict):
                     continue
+                obj = _unwrap(obj)
                 role = _role(obj)
                 if role not in ("user", "assistant"):
                     continue
