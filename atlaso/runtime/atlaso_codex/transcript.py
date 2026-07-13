@@ -83,6 +83,31 @@ def _content(obj: dict) -> object:
     return obj.get("content")
 
 
+import re
+
+# Codex prepends attachment metadata to the user's message in the transcript:
+#   # Files mentioned by the user: ## <hash>.jpg: /path.jpg ## My request for
+#   Codex: <the actual message> … <image name=… path="…"></image>
+# None of that is the user speaking — strip it so captures read clean (leaked
+# live 2026-07-13: a dashboard memory led with the file-hash preamble).
+_REQUEST_MARKER = re.compile(r"##\s*My request for Codex:\s*", re.IGNORECASE)
+_FILES_PREAMBLE = re.compile(r"^\s*#\s*Files mentioned by the user:.*$", re.IGNORECASE | re.DOTALL)
+_IMAGE_TAG = re.compile(r"<image\b[^>]*>.*?</image>", re.IGNORECASE | re.DOTALL)
+
+
+def _strip_preamble(text: str) -> str:
+    """Remove Codex's attachment preamble + inline <image> tags from a user turn.
+    If the 'My request for Codex:' marker exists, everything before it is
+    metadata; without the marker, a preamble-only turn (pure file listing)
+    reduces to ''. Non-preamble text passes through untouched."""
+    m = _REQUEST_MARKER.search(text)
+    if m:
+        text = text[m.end():]
+    elif _FILES_PREAMBLE.match(text):
+        return ""
+    return _IMAGE_TAG.sub("", text).strip()
+
+
 def last_exchange(path: str) -> tuple[str, str]:
     """Return (last_user_text, assistant_reply_to_it); either may be ''.
 
@@ -120,7 +145,7 @@ def last_exchange(path: str) -> tuple[str, str]:
     if last_user_idx is None:
         return "", ""
 
-    last_user = msgs[last_user_idx][1]
+    last_user = _strip_preamble(msgs[last_user_idx][1])
     asst = ""
     for role, text in msgs[last_user_idx + 1:]:
         if role == "assistant":

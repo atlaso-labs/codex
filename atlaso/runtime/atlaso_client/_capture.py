@@ -43,6 +43,12 @@ _SYSTEM_TURN_PREFIXES = (
     "<system-reminder>",
     "[Image: source:",
     "[Image #",
+    # The harness prepends prose BEFORE the tag on inter-agent mail and system
+    # notifications — the bare-tag prefixes above never see it (leaked live
+    # 2026-07-13: "Another Claude session sent a message: <teammate-message…"
+    # rows reached the dashboard).
+    "Another Claude session sent a message:",
+    "[SYSTEM NOTIFICATION",
 )
 
 # Auto-capture size cap. Longer user turns are almost always pasted logs/docs/
