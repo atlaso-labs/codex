@@ -1,6 +1,6 @@
 {
   "name": "atlaso",
-  "version": "0.1.6",
+  "version": "0.1.7",
   "description": "Automatic long-term memory for Codex — recalls relevant context every turn, captures what matters, and syncs across sessions and devices.",
   "author": { "name": "Atlaso Labs Inc." },
   "homepage": "https://atlaso.ai",

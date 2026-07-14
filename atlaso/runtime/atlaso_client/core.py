@@ -18,7 +18,7 @@ from __future__ import annotations
 import uuid
 from typing import Any, Optional
 
-from . import _telemetry, config, state
+from . import _credential, _telemetry, config, state
 from .api import AuthRejected, BrainAPI, EdgeBlocked, NotEntitled
 from .cache import Cache
 
@@ -57,6 +57,11 @@ class Client:
         # This machine's device_id (from auth.json). With `tool`, it scopes the
         # cached cloud-link verdict so a different tool/device never inherits it.
         self._device_id = (config.load_auth() or {}).get("device_id")
+        # Which credential file backed this session's token ("own" = this tool's, so a
+        # 401 retires only IT; "shared" = the legacy bearer, which we must never delete
+        # out from under the machine's other integrations).
+        self._cred_source: str | None = None
+        self._cred_token: str | None = None
         if api is not None:
             self.api = api
         elif _auto_api:
@@ -64,16 +69,41 @@ class Client:
         else:
             self.api = None
 
-    @staticmethod
-    def _resolve_api(server: str | None, token: str | None) -> Optional[BrainAPI]:
-        if not (server and token):
-            auth = config.load_auth() or {}
-            server = server or auth.get("server") or config.DEFAULT_SERVER
-            token = token or auth.get("token")
-        if not (server and token):
-            return None  # not connected → offline mode
+    def _resolve_api(self, server: str | None, token: str | None) -> Optional[BrainAPI]:
+        if server and token:  # explicit override (tests / embedding)
+            try:
+                return BrainAPI(server, token)
+            except Exception:
+                return None
         try:
-            return BrainAPI(server, token)
+            cred = _credential.resolve(self.tool)
+        except _credential.ToolRemoved:
+            # The user removed this tool from this device. Go quiet — do NOT fall back
+            # to the shared bearer, which would resurrect exactly what they removed.
+            state.set_local_only(state.AUTH_REJECTED, tool=self.tool,
+                                 device_id=self._device_id)
+            return None
+        except _credential.ToolNotEntitled:
+            # Free plan, another tool holds the slot. Local-only — and NOT on the
+            # shared bearer, which would let this tool masquerade as the entitled one.
+            state.set_local_only(state.NOT_ENTITLED, tool=self.tool,
+                                 device_id=self._device_id)
+            return None
+        except Exception:
+            cred = None
+        if not cred or not cred.get("token"):
+            return None  # not connected → offline mode
+        self._cred_source = cred.get("source")
+        self._cred_token = cred.get("token")
+        # A FRESHLY MINTED credential must not inherit the dead one's punishment. The
+        # run that got the 401 wrote an auth_rejected verdict with a 1-hour TTL; without
+        # this, the next run — now holding a brand-new working credential — would keep
+        # suppressing cloud sync for the rest of that hour, and a paying user would see
+        # an outage we had already fixed. Forget the verdict; the next op re-verifies.
+        if cred.get("minted"):
+            state.invalidate()
+        try:
+            return BrainAPI(cred.get("server") or config.DEFAULT_SERVER, cred["token"])
         except Exception:
             return None
 
@@ -111,6 +141,13 @@ class Client:
                       else state.AUTH_REJECTED)
             state.set_local_only(reason, tool=self.tool, device_id=self._device_id)
             _telemetry.log("auth", "auth_rejected", code=exc.code, tool=self.tool)
+            # Retire ONLY the credential that was actually rejected. If this tool had
+            # its own and it died (the user removed the tool, or it rotated), drop that
+            # file so the next run re-bootstraps — and gets told to stay down if it was
+            # revoked. Never delete the shared bearer: the machine's other integrations
+            # are still riding it.
+            if self._cred_source:
+                _credential.retire(self.tool, self._cred_source, self._cred_token)
         elif isinstance(exc, NotEntitled):
             state.set_local_only(state.NOT_ENTITLED, tool=self.tool, device_id=self._device_id)
             _telemetry.log("auth", "not_entitled", tool=self.tool)
