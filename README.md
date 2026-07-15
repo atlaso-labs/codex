@@ -51,7 +51,7 @@ the same shape as the Claude Code connector:
 | **recall** (`hooks/recall.sh`) | `UserPromptSubmit` hook | Injects recalled memory as `additionalContext` before the model sees the prompt. Synchronous, fast. |
 | **capture** (`hooks/capture.sh`) | `Stop` hook | Saves the just-finished exchange. Instant **local** write (no network), synced later. Also fires the end-of-turn flush (see caveat 1). |
 | **start** (`hooks/start.sh`) | `SessionStart` hook | Local-only banner (once) + background cache sync. Detached — never delays session open. |
-| **memory MCP server** (`.mcp.json` → `bin/atlaso-memory-mcp`) | `[mcp_servers.memory]` | Model-invoked deliberate tools: `recall`, `remember`, `forget`, `recent`, `status`. |
+| **Atlaso MCP server** (`.mcp.json` → `bin/atlaso-memory-mcp`) | `[mcp_servers.Atlaso]` | Model-invoked deliberate tools: `recall`, `remember`, `forget`, `recent`, `status`. |
 | **skill** (`skills/memory/SKILL.md`) | Codex skill | Curation judgment — when to remember, personal vs project, fixing memory. |
 | **rules** (`AGENTS.md`) | Auto-loaded `AGENTS.md` | Tells the model to recall before answering + deposit durable facts (works even MCP-only, no plugin). |
 
@@ -134,7 +134,7 @@ model deposits via the MCP `remember` tool.**
 ```
 tools/codex/
   .codex-plugin/plugin.json   plugin manifest (bundles mcp + hooks + skills)
-  .mcp.json                   registers the `memory` MCP server (mcp_servers map)
+  .mcp.json                   registers the `Atlaso` MCP server (mcp_servers map)
   config.toml.example         manual MCP-only TOML snippet
   AGENTS.md                   auto-loaded rules snippet (recall + remember)
   hooks/      recall.sh · capture.sh · start.sh · _resolve.sh · hooks.json

@@ -1,6 +1,6 @@
 {
   "mcpServers": {
-    "memory": {
+    "Atlaso": {
       "command": "bash",
       "args": ["./bin/atlaso-memory-mcp"],
       "cwd": "."
