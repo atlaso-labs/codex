@@ -11,6 +11,12 @@ set -uo pipefail
 HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PLUGIN_DIR="$(cd "$HERE/.." && pwd)"
 
+# Tag this connector so the shared atlaso_mcp server scopes its DELIBERATE tools to the
+# per-tool credential + entitlement/tombstone gate (free = 1 active tool/device). Without
+# it the MCP path resolves the shared bearer and skips per-tool gating. .mcp.json sets no
+# env, so default it here (overridable).
+export ATLASO_TOOL="${ATLASO_TOOL:-codex}"
+
 if [ -d "$PLUGIN_DIR/runtime" ]; then
   command -v uv >/dev/null 2>&1 || { echo "atlaso-mcp: uv is required to run the memory server" >&2; exit 1; }
   cd "$PLUGIN_DIR/runtime" && exec uv run --quiet python -m atlaso_mcp

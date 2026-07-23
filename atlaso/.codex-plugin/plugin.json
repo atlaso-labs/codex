@@ -1,12 +1,19 @@
 {
   "name": "atlaso",
-  "version": "0.1.7",
-  "description": "Automatic long-term memory for Codex — recalls relevant context every turn, captures what matters, and syncs across sessions and devices.",
-  "author": { "name": "Atlaso Labs Inc." },
+  "version": "0.1.8",
+  "description": "Automatic long-term memory for Codex \u2014 recalls relevant context every turn, captures what matters, and syncs across sessions and devices.",
+  "author": {
+    "name": "Atlaso Labs Inc."
+  },
   "homepage": "https://atlaso.ai",
   "repository": "https://github.com/atlaso-labs/codex",
   "license": "MIT",
-  "keywords": ["memory", "atlaso", "recall", "second-brain"],
+  "keywords": [
+    "memory",
+    "atlaso",
+    "recall",
+    "second-brain"
+  ],
   "skills": "./skills/",
   "mcpServers": "./.mcp.json",
   "hooks": "./hooks/hooks.json",
