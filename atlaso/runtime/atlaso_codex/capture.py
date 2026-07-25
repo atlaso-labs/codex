@@ -62,7 +62,11 @@ def run(payload: dict, client) -> bool:
         asst_text = (payload.get("last_assistant_message") or "").strip()
     if not is_substantive(user_text):
         return False
-    res = client.capture(user_text, asst_text or None, source_tag="codex", push=False)
+    # Project attribution from the event's cwd — the process cwd is the plugin's
+    # vendored runtime/ (the shell wrapper cds there), which used to mint a fake
+    # "runtime-<hash>" project per plugin release (field deposit 52c7e97d).
+    res = client.capture(user_text, asst_text or None, source_tag="codex", push=False,
+                         project_dir=payload.get("cwd") or None)
     return bool(res.get("saved"))
 
 

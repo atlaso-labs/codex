@@ -58,7 +58,12 @@ def run(payload: dict, client) -> dict | None:
     # cross-project leak) + thread Codex's session_id so the server logs which
     # memories were injected for the recall-usefulness feedback loop.
     session = payload.get("session_id") or payload.get("session")
-    res = client.recall(prompt, limit=limit, project=_project.project_key(), session=session)
+    # Project scope from the event's cwd (process cwd is the vendored runtime/,
+    # never the user's repo — same fix as capture).
+    from pathlib import Path
+    cwd = payload.get("cwd")
+    project = _project.project_key(Path(cwd)) if cwd else _project.project_key()
+    res = client.recall(prompt, limit=limit, project=project, session=session)
     block = render(res.get("results", []))
     if not block:
         return None

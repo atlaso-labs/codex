@@ -18,6 +18,10 @@ _PLUGIN_DIR="$(cd "$_HERE/.." && pwd)"
 
 atlaso_run() {
   local mod="$1"
+  # Preserve the caller's real working directory BEFORE we cd into the vendored
+  # runtime — project detection reads it (else it would resolve the plugin's own
+  # runtime/ dir, which carries pyproject.toml, as "the project").
+  export ATLASO_CALLER_PWD="${ATLASO_CALLER_PWD:-$PWD}"
   if [ -d "$_PLUGIN_DIR/runtime" ]; then
     # built/installed: portable uv-managed runtime (Python + httpx + mcp, cached)
     command -v uv >/dev/null 2>&1 || return 0
