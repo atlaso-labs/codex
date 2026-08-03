@@ -2,6 +2,17 @@
 
 All notable changes to the Atlaso Memory plugin.
 
+## [0.1.11] — 2026-08-03
+
+### Fixed
+- **The memory tools work again on a fresh install.** The plugin asked for "the
+  MCP library, version 1.27 or newer". A version 2 of that library was published
+  on 28 July which moved things around, so any *new* install picked it up and the
+  memory tools (`remember`, `recall`, `forget`, `recent`, `status`) failed to
+  start. Automatic recall and capture were unaffected — they don't use that
+  library — so memory kept working; only the tools you call on purpose were
+  broken. The version is now pinned so this cannot happen again.
+
 ## [0.1.10] — 2026-08-02
 
 ### Fixed
