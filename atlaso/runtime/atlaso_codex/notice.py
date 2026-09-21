@@ -103,17 +103,56 @@ def _dedupe_key(mode: dict) -> str:
     return str(mode.get("since") or 0)
 
 
-def run(client) -> dict | None:
-    """Pure-ish logic (testable): client → the hook output dict, or None."""
+def _degraded_banner(mode: dict) -> tuple[str, str] | None:
+    """(message, dedupe_key) when the device is LINKED but server recall keeps failing — the fail-open path that
+    otherwise degrades recall to the local keyword floor with nobody told (production audit E6 / C15; the
+    interventional falsifier of LabDirector 160ff6e9: keyed on the EXISTING fallback episode, no emitter changed).
+    Byte-identical to the Claude Code connector's banner so the two surfaces stay in parity. Keyed on the episode's
+    nonce (_fallback.episode_key; first_ts alone collided on same-second reform, cc61a3cf) so it shows once per episode, and clears itself on the next successful server recall."""
+    if mode.get("mode") != "linked":
+        return None
+    try:
+        from atlaso_client import _fallback
+        ep = _fallback.episode()
+    except Exception:
+        return None
+    if not ep:
+        return None
+    return (
+        "Atlaso · cloud recall isn't responding — memory is running from this "
+        "device's local cache (results may be shallower). Capture and sync are "
+        "unaffected; this clears on its own once the service responds.",
+        _fallback.episode_key(ep),
+    )
+
+
+class NoticeOutput(dict):
+    """Serializable hook output with an un-serialized pending acknowledgement."""
+
+    def __init__(self, output=None, *, key: str | None = None):
+        super().__init__(output or {})
+        self.notice_key = key
+
+    def acknowledge(self) -> None:
+        # Call only after the complete hook JSON has been written and flushed.
+        # A timeout, broken pipe or aborted construction leaves the notice due.
+        if self.notice_key is not None:
+            _mark_shown(self.notice_key)
+
+
+def run(client) -> NoticeOutput | None:
+    """Prepare a notice without consuming its once-per-episode marker."""
     mode = client.cloud_mode()
     msg = build_message(mode)
+    key = _dedupe_key(mode) if msg else None
     if not msg:
-        return None
-    key = _dedupe_key(mode)
+        degraded = _degraded_banner(mode)
+        if not degraded:
+            return None
+        msg, key = degraded
     if _already_shown(key):
         return None
-    _mark_shown(key)
-    return {"systemMessage": msg}
+    return NoticeOutput({"systemMessage": msg}, key=key)
 
 
 def main() -> int:
@@ -132,7 +171,11 @@ def main() -> int:
         except Exception:
             pass
     if out:
-        print(json.dumps(out))
+        try:
+            print(json.dumps(out), flush=True)
+        except OSError:
+            return 0
+        out.acknowledge()
     return 0
 
 

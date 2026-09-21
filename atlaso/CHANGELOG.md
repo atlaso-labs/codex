@@ -26,3 +26,6 @@ All notable changes to the Atlaso Memory plugin.
 
   The limit is deliberately kept, not removed: recall blocks your prompt while it
   runs, so an unbounded wait would turn a slow lookup into a frozen session.
+
+## 0.1.12 (2026-09-21)
+- Project-aware Ambient Memory: scoped first-session context, enrichment lineage fixes. Qualified against emergence-lab a895cf5e (core a0a461ff).

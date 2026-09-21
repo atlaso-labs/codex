@@ -38,7 +38,7 @@ Requires [`uv`](https://docs.astral.sh/uv/) — the plugin runs on a uv-managed 
 |---|---|---|
 | recall | `UserPromptSubmit` hook | injects recalled memory before Codex sees your prompt |
 | capture | `Stop` hook | saves the finished exchange (instant local write, synced later) |
-| start | `SessionStart` hook | background cache sync; never delays session open |
+| start | `SessionStart` hook | eligible personal + current-project Ambient Memory, then background cache sync |
 | memory tools | MCP server — `recall`, `remember`, `forget`, `recent`, `status` | deliberate, model-invoked memory |
 | skill + rules | `SKILL.md` + `AGENTS.md` | when to remember, personal vs project, fixing memory |
 
@@ -64,3 +64,20 @@ A past Desktop update temporarily stopped hooks from firing ([openai/codex#21639
 ---
 
 Built by [Atlaso Labs Inc.](https://atlaso.ai) · source: [github.com/atlaso-labs/codex](https://github.com/atlaso-labs/codex)
+
+## Ambient Memory at session start
+
+When enabled on an eligible plan, the start hook requests a brief for this tool
+and the host event's project directory. Personal context can accompany the
+current project's context. Missing or untrustworthy project identity requests
+personal context only. A first session can receive a brief without a local cache.
+Each session validates the current server policy; disabled, offline, rejected,
+or incompatible responses inject no Ambient Memory. Reopening after recovery
+retries automatically. Per-turn recall remains a separate feature.
+
+The Python start path has a three-second budget on POSIX; the host hook manifest
+sets a five-second timeout, including runtime startup. The latter is also the
+Windows bound. First-time runtime installation can exceed that budget and yield
+no brief until dependencies are available. These source changes require publishing
+the rebuilt plugin and updating the installed version; a source checkout alone
+does not update a user's plugin. Host versions must actually execute SessionStart.
