@@ -2,6 +2,10 @@
 
 All notable changes to the Atlaso Memory plugin.
 
+## [0.1.13] — 2026-09-23
+
+New Atlaso logo: the plugin now shows the ten-dot mark on a black square. No behavior changes.
+
 ## [0.1.11] — 2026-08-03
 
 ### Fixed
