@@ -64,7 +64,12 @@ def run(payload: dict, client) -> dict | None:
     cwd = payload.get("cwd")
     project = _project.project_key(Path(cwd)) if cwd else _project.project_key()
     res = client.recall(prompt, limit=limit, project=project, session=session)
-    block = render(res.get("results", []))
+    results = res.get("results", [])
+    block = render(results)
+    # Debug-only proof the per-turn hook fired (counts only, never content).
+    n = len(results or [])
+    _shim.log("recall", f"fired source={res.get('source')} results={n} "
+                        f"injected={bool(block)}")
     if not block:
         return None
     return {

@@ -1,10 +1,18 @@
 # Changelog
 
-All notable changes to the Atlaso Memory plugin.
+## [0.1.14] - 2026-09-24
+
+Intel Macs now get memory: the plugin runtime asks for cryptography 48.x on Intel (x86_64) Macs only, so it installs there instead of failing silently; every other platform keeps cryptography 50.x. With ATLASO_DEBUG=1 the session-start and per-turn hooks now write one counts-only line when they fire, so you can tell a hook that ran from one that was skipped. No memory text is logged.
 
 ## [0.1.13] — 2026-09-23
 
-New Atlaso logo: the plugin now shows the ten-dot mark on a black square. No behavior changes.
+New Atlaso logo: the plugin listing and composer icon now show the ten-dot mark on a black square. No behavior changes.
+
+## [0.1.12] — 2026-09-21
+
+Project-bound SessionStart context with fresh policy checks and a bounded hook deadline. Preserve reconnect notices until output is flushed. Prepared as an unpublished candidate; actual-host delivery remains a separate qualification gate.
+
+All notable changes to the Atlaso Memory plugin.
 
 ## [0.1.11] — 2026-08-03
 
@@ -30,6 +38,3 @@ New Atlaso logo: the plugin now shows the ten-dot mark on a black square. No beh
 
   The limit is deliberately kept, not removed: recall blocks your prompt while it
   runs, so an unbounded wait would turn a slow lookup into a frozen session.
-
-## 0.1.12 (2026-09-21)
-- Project-aware Ambient Memory: scoped first-session context, enrichment lineage fixes. Qualified against emergence-lab a895cf5e (core a0a461ff).

@@ -27,6 +27,9 @@ def run(client, payload: dict | None = None) -> dict | None:
             out["hookSpecificOutput"] = a["hookSpecificOutput"]
     except Exception:
         pass
+    # Debug-only proof the SessionStart hook fired (flags only, never content).
+    _shim.log("start", f"fired ambient={'hookSpecificOutput' in out} "
+                       f"notice={'systemMessage' in out}")
     return out or None
 
 
