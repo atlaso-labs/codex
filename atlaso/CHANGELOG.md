@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.1.15] - 2026-09-25
+
+Capture keeps corrections. A same-shape update ("we use npm" -> "we use bun") or a reverted decision is no longer dropped as a duplicate of the earlier note, and duplicate checks look only at live memories in the same project. Same-shape updates dropped on the synthetic bench fell from 29 of 106 to 2 of 106 and reverts from 26 of 26 to 0. The client cache gains plain nullable scope columns it fills itself, with no triggers and no SQLite JSON functions, so older plugin versions keep reading and writing the same file. Built from emergence-lab main 0f173e98c (lab gate cleared: LabDirector ruling 9b38478c, CodeRedTeam ec375bd7, DXCritic 6f7c6cf8). Known limit: a correction that only reassigns a value already named in the same note may still be treated as a duplicate; state the change in its own sentence.
+
 ## [0.1.14] - 2026-09-24
 
 Intel Macs now get memory: the plugin runtime asks for cryptography 48.x on Intel (x86_64) Macs only, so it installs there instead of failing silently; every other platform keeps cryptography 50.x. With ATLASO_DEBUG=1 the session-start and per-turn hooks now write one counts-only line when they fire, so you can tell a hook that ran from one that was skipped. No memory text is logged.
