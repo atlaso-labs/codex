@@ -52,6 +52,7 @@ Otherwise, trust the injected memories and **don't over-search**.
 
 A memory is wrong or outdated → `recall` to find its id, then `forget` it (or save the
 correction). Supersede rather than piling up contradictions.
+`forget`: Removes it from your memory everywhere Atlaso recalls or exports it. You can't undo it.
 
 ## Good vs skip
 

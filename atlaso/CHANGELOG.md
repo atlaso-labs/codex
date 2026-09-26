@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.1.16] - 2026-09-26
+
+Forget now excludes a forgotten memory from Atlaso’s recall and export tools, cleans this device’s cache when possible, and deletes Ambient snapshots already on disk. The MCP result reports `local_cache_cleanup: "done"` or `"pending"`; pending cache cleanup retries when the cache opens or syncs. Memory skills now say that you can’t undo forget, and OpenCode installs the memory skill. A context load already in flight can still contain the forgotten text and make it available to new sessions for up to 15 minutes after that load finishes. The in-flight Ambient fence and the hosted MCP description are not part of this release. Product bytes equal the lab-gated emergence-lab commit 0578e74ac (CodeRedTeam bfe4497e, carried by byte identity 972f474e; DXCritic c27cb73e).
+
 ## [0.1.15] - 2026-09-25
 
 Capture keeps corrections. A same-shape update ("we use npm" -> "we use bun") or a reverted decision is no longer dropped as a duplicate of the earlier note, and duplicate checks look only at live memories in the same project. Same-shape updates dropped on the synthetic bench fell from 29 of 106 to 2 of 106 and reverts from 26 of 26 to 0. The client cache gains plain nullable scope columns it fills itself, with no triggers and no SQLite JSON functions, so older plugin versions keep reading and writing the same file. Built from emergence-lab main 0f173e98c (lab gate cleared: LabDirector ruling 9b38478c, CodeRedTeam ec375bd7, DXCritic 6f7c6cf8). Known limit: a correction that only reassigns a value already named in the same note may still be treated as a duplicate; state the change in its own sentence.
