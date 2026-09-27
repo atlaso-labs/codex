@@ -31,8 +31,10 @@ You have a long-term memory via the Atlaso `memory` MCP server (tools: `recall`,
   restatements of files already in the repo.
 - **Personal vs project:** ask "would this still be true in a different project?"
   Yes → it's personal (follows the user everywhere). No → it's project-specific.
-- **Fix, don't pile up:** if a memory is wrong/outdated, `recall` its id and
-  `forget` it (or save the correction) rather than stacking contradictions.
+- **Changed vs wrong:** when a decision changes, save the change naming both
+  values and the reason ("moved from A to B because ...") and keep the old note.
+  Only a memory that was never true gets `forget` (after `recall` finds its id).
+  Never re-save something you only read from memory.
 
 Memory is the user's data — you decide how to use it, and you keep it small and
 high-signal.

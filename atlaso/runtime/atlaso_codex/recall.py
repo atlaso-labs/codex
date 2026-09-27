@@ -19,8 +19,9 @@ import json
 import os
 import re
 import sys
+from datetime import datetime, timezone
 
-from atlaso_client import _project
+from atlaso_client import _project, _render
 
 from . import _shim
 
@@ -33,16 +34,21 @@ def _clean(text: str) -> str:
     return _FENCE_RE.sub("[atlaso]", (text or "").strip())
 
 
-def render(results: list[dict]) -> str | None:
-    """Build the injection block from recall results, or None if nothing usable."""
+def render(results: list[dict], now: datetime | None = None) -> str | None:
+    """Build the injection block from recall results, or None if nothing usable.
+    Each line carries its note's UTC day when the server sent created_at (rung
+    85bcf262 card B1; the shared label is atlaso_client._render._date_label).
+    Undated lines come first (``_render.undated_first``)."""
+    now = now or datetime.now(timezone.utc)
     lines = []
     for r in results or []:
         content = _clean(r.get("content", ""))
         if content:
-            lines.append("- " + content)
+            date = _render._date_label(r.get("created_at"), now)
+            lines.append((date is not None, "- " + (f"[{date}] " if date else "") + content))
     if not lines:
         return None
-    return f"=== {_BANNER} ===\n" + "\n".join(lines) + f"\n=== {_BANNER} ==="
+    return f"=== {_BANNER} ===\n" + "\n".join(_render.undated_first(lines)) + f"\n=== {_BANNER} ==="
 
 
 def run(payload: dict, client) -> dict | None:
