@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.1.18] - 2026-09-30
+
+Security fixes (batch B1). A saved note can no longer add lines to the injected memory block or fake its start or end, and invisible control, zero-width and bidirectional-override characters are removed from recalled notes. Ordinary notes print exactly as before, tabs and emoji included. A note written on several lines now prints on one line, as it already did in Claude Code, Grok Build, Cursor and OpenCode. The plugin's Python runtime now installs only the exact dependency versions in its lock file.
+
 ## [0.1.17] - 2026-09-26
 
 Dated recall lines. Each note in the injected memory block now starts with the latest UTC day you stated it, for example `- [Aug 14] use bun`. A note rewritten later by server-side enrichment keeps the day of the statement it restates, not the rewrite day. A note whose day is unknown shows no date and is listed first. Repeating a note in your own words can update its statement date even if Atlaso skips the repeated text as a duplicate; the assistant repeating a note back never re-dates it. Notes queued offline are sent with the time they were captured. Against a brain that does not return dates, lines stay undated.

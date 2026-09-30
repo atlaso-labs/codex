@@ -17,7 +17,6 @@ from __future__ import annotations
 
 import json
 import os
-import re
 import sys
 from datetime import datetime, timezone
 
@@ -26,12 +25,15 @@ from atlaso_client import _project, _render
 from . import _shim
 
 _BANNER = "Atlaso Memory"
-# Stop stored content from forging our own banner line.
-_FENCE_RE = re.compile(r"(?i)=+\s*Atlaso Memory\s*=+")
 
 
 def _clean(text: str) -> str:
-    return _FENCE_RE.sub("[atlaso]", (text or "").strip())
+    """Stored text → one safe line: the shared renderer contract
+    (atlaso_client._render.sanitize_line) in this connector's pre-B1 spacing mode
+    ("join_lines": a line break becomes one space, tabs are kept), so a saved note can
+    never add a line, forge a fence or carry invisible/bidi characters into the
+    injected block, and ordinary one-line notes keep their exact bytes."""
+    return _render.sanitize_line(text, "join_lines")
 
 
 def render(results: list[dict], now: datetime | None = None) -> str | None:
