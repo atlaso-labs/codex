@@ -12,6 +12,8 @@ Desktop app** (they share one config, so a single install covers all three).
 
 ## Install
 
+**Install [`uv`](https://docs.astral.sh/uv/) first.** The plugin runs on a uv-managed Python, so uv is the only prerequisite. Without it, prompts run without recall and Codex shows "Atlaso needs uv. Install uv, then retry your prompt; memory will set up in the background."
+
 ### Codex Desktop / IDE (GUI)
 
 1. Open **Codex → Plugins**.
@@ -21,7 +23,7 @@ Desktop app** (they share one config, so a single install covers all three).
    - **Git ref:** `main`
    - **Sparse paths:** *(leave blank)*
 4. Click **Add marketplace**, then open **Atlaso** and **Add to Codex** on the *Atlaso Memory* plugin.
-5. Your first prompt opens a browser to connect your account (optional — memory works locally without it).
+5. Right after an install or update the plugin prepares its memory runtime in the background, which can take a few minutes. Until it is ready, prompts run without recall and Codex shows a notice saying so. The first prompt after it is ready opens a browser to connect your account (optional — memory works locally without it). With the Atlaso CLI, `atlaso setup` prepares the runtime up front and `atlaso status` says whether your next prompt gets recall.
 
 ### Codex CLI
 
@@ -29,8 +31,6 @@ Desktop app** (they share one config, so a single install covers all three).
 codex plugin marketplace add atlaso-labs/codex
 codex plugin add atlaso@atlaso
 ```
-
-Requires [`uv`](https://docs.astral.sh/uv/) — the plugin runs on a uv-managed Python, so there's nothing else to install.
 
 ## What gets installed
 

@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.1.19] - 2026-10-01
+
+Hooks never hold up a prompt. Each Atlaso hook now stops on its own well inside Codex's time limit: recall gives up after 2.5 s (the Atlaso server gets 1.5 s of that, then notes come from this device's cache), saving a finished turn hands the work to a background process and returns at once, and session start stops within 2.5 s. When a hook stops early it adds no memory rather than part of a block. The plugin no longer sets up its Python runtime inside a hook: `atlaso setup` now prepares that runtime before it reports the tool ready, so the first prompt gets memory; if the runtime is still being prepared (for example right after the plugin updates itself), that prompt runs without memory, Codex shows a warning saying so, and `atlaso status` says whether the next prompt will get memory and what to run if setup failed. Each skip is counted on this device as a time, tool and reason, never any text, and `atlaso status` shows the count for the last 24 hours. This fixes "UserPromptSubmit hook timed out after 30s" on the first prompt after updating to 0.1.18.
+
+A finished turn is now written to this device before any network call, so a slow Atlaso server or a hook stopped at its time limit can no longer lose it: a turn that could not be saved in time waits on this device and is saved by the next turn's hook, once.
+
+A turn saved on this device is uploaded only by the tool that captured it, after that tool's own plan check. Another Atlaso tool syncing on the same machine no longer uploads it, so a tool that is local-only on your plan keeps its turns on this device.
+
+Reconnecting a saved device renews that same device. Atlaso now keeps a reconnect proof, issued when you connect, in the owner-only auth file on this device and sends it when this device reconnects. A connection saved before this release, or one whose proof has expired, is renewed after you approve the link that opens in your browser; it never takes a second device slot on the Free plan.
+
 ## [0.1.18] - 2026-09-30
 
 Security fixes (batch B1). A saved note can no longer add lines to the injected memory block or fake its start or end, and invisible control, zero-width and bidirectional-override characters are removed from recalled notes. Ordinary notes print exactly as before, tabs and emoji included. A note written on several lines now prints on one line, as it already did in Claude Code, Grok Build, Cursor and OpenCode. The plugin's Python runtime now installs only the exact dependency versions in its lock file.

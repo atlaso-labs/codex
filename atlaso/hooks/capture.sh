@@ -7,5 +7,5 @@ set -uo pipefail
 HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 # shellcheck source=/dev/null
 . "$HERE/_resolve.sh"
-atlaso_run atlaso_codex.capture
+atlaso_capture codex capture atlaso_codex.capture
 exit 0

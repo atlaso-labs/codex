@@ -98,7 +98,7 @@ def main() -> int:
         return 0
     payload = _shim.read_payload()
     try:
-        client = _shim.make_client()
+        client = _shim.make_local_client()
     except Exception:
         return 0
     try:

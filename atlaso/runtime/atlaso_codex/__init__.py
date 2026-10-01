@@ -17,3 +17,9 @@ There is NO SessionEnd event in Codex — end/flush logic is folded into Stop an
 the next SessionStart (see capture.py + start.py). Do not add an end.py here.
 """
 __version__ = "0.1.0"
+
+import time as _time
+
+#: When this hook process started running Python code (monotonic). The hook deadline counts
+#: from here, so interpreter imports spend the budget too (atlaso_client._deadline.run_hook).
+STARTED = _time.monotonic()
