@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.1.20] - 2026-10-22
+
+Memory arrives whole. Codex replaces hook text over about 2,500 tokens (10,000 bytes) with a head and tail preview, which cut the middle out of the recalled notes. The recalled-memory block now stays under 9,000 bytes: notes are added whole, most relevant first, a note's short form is used when the server sends one and only that fits, and a closing line says how many notes did not fit and that the Atlaso recall tool can show them. A recall that already fits prints exactly as before. A session-start brief over that size is not sent.
+
+Privacy: a password, API key, token or private key saved inside a note is replaced with a `[REDACTED:...]` marker before the note reaches the AI; the rest of the note is still shown.
+
 ## [0.1.19] - 2026-10-01
 
 Hooks never hold up a prompt. Each Atlaso hook now stops on its own well inside Codex's time limit: recall gives up after 2.5 s (the Atlaso server gets 1.5 s of that, then notes come from this device's cache), saving a finished turn hands the work to a background process and returns at once, and session start stops within 2.5 s. When a hook stops early it adds no memory rather than part of a block. The plugin no longer sets up its Python runtime inside a hook: `atlaso setup` now prepares that runtime before it reports the tool ready, so the first prompt gets memory; if the runtime is still being prepared (for example right after the plugin updates itself), that prompt runs without memory, Codex shows a warning saying so, and `atlaso status` says whether the next prompt will get memory and what to run if setup failed. Each skip is counted on this device as a time, tool and reason, never any text, and `atlaso status` shows the count for the last 24 hours. This fixes "UserPromptSubmit hook timed out after 30s" on the first prompt after updating to 0.1.18.

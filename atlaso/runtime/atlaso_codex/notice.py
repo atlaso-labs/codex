@@ -24,7 +24,7 @@ def _grace_message(grace: dict) -> str:
     days = grace.get("days_left")
     tools = grace.get("tools_connected") or 0
     head = (
-        f"Atlaso · your Pro plan ended. Free keeps 1 tool — you have {tools} "
+        f"Atlaso · your Pro plan ended. Free keeps 1 tool: you have {tools} "
         "connected. "
     )
     if days is not None and days <= 1:
@@ -35,7 +35,7 @@ def _grace_message(grace: dict) -> str:
         )
     if days is not None and days <= 2:
         return (
-            head + f"{days} days left — upgrade at {_APP} to keep them all, or "
+            head + f"{days} days left: upgrade at {_APP} to keep them all, or "
             "pick one to keep. Your memory stays safe."
         )
     n = f"{days} days" if days is not None else "A few days"
@@ -58,13 +58,13 @@ def build_message(mode: dict) -> str | None:
     # auth_rejected / reconnect_required — all three deserve the banner.
     if reason in ("revoked", "auth_rejected", "reconnect_required"):
         return (
-            "Atlaso · this device was disconnected — running in local-only mode. "
+            "Atlaso · this device was disconnected: running in local-only mode. "
             "Your memory still works locally; reconnect at " + _APP + " to resume "
             "cloud sync."
         )
     if reason == "not_entitled":
         return (
-            "Atlaso · Codex isn't your active tool on the free plan — running in "
+            "Atlaso · Codex isn't your active tool on the free plan: running in "
             "local-only mode. Switch tools or upgrade at " + _APP + "."
         )
     # not_connected → the autoconnect flow handles first-time linking; stay quiet.
@@ -119,7 +119,7 @@ def _degraded_banner(mode: dict) -> tuple[str, str] | None:
     if not ep:
         return None
     return (
-        "Atlaso · cloud recall isn't responding — memory is running from this "
+        "Atlaso · cloud recall isn't responding: memory is running from this "
         "device's local cache (results may be shallower). Capture and sync are "
         "unaffected; this clears on its own once the service responds.",
         _fallback.episode_key(ep),
