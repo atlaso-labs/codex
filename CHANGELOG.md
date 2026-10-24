@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.1.21] - 2026-10-24
+
+Atlaso keeps itself up to date. At most once a day, session start asks the Atlaso CLI to check for a newer release in the background; the hook returns at once and never waits on the network. The CLI checks a new release against its published checksums before it replaces itself, then updates this plugin through Codex's own `codex plugin marketplace upgrade` command. Atlaso never edits your Codex settings file. `atlaso update --off` or `ATLASO_NO_AUTO_UPDATE=1` turns it off.
+
 ## [0.1.20] - 2026-10-22
 
 Memory arrives whole. Codex replaces hook text over about 2,500 tokens (10,000 bytes) with a head and tail preview, which cut the middle out of the recalled notes. The recalled-memory block now stays under 9,000 bytes: notes are added whole, most relevant first, a note's short form is used when the server sends one and only that fits, and a closing line says how many notes did not fit and that the Atlaso recall tool can show them. A recall that already fits prints exactly as before. A session-start brief over that size is not sent.

@@ -9,4 +9,6 @@ HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 . "$HERE/_resolve.sh"
 atlaso_fg codex start "$ATLASO_START_BUDGET" atlaso_codex.start
 atlaso_bg codex start atlaso_codex.sync
+# Then, at most once a day, let the Atlaso CLI check for an update (detached, never waited on).
+atlaso_update_nudge
 exit 0
