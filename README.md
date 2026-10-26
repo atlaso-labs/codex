@@ -10,6 +10,9 @@ Desktop app** (they share one config, so a single install covers all three).
 - 🔒 **Local-first** — memory works offline on your machine; sign in to sync to the cloud.
 - 🗂️ **Personal + project memory** — preferences follow you everywhere; repo facts stay in the repo.
 
+## Why this exists
+Codex reads AGENTS.md and keeps its own local memories on the machine you run it on. This connector gives Codex CLI, IDE and Desktop a memory that carries yesterday's work into today, your shell and tooling choices, and the decisions you don't want re-litigated, and shares it with Claude Code, Cursor and your other tools. Automatic in Codex CLI; Codex Desktop installs the same plugin from its marketplace. [How it works](https://www.atlaso.ai/for/codex) · [Docs](https://docs.atlaso.ai/tools/codex)
+
 ## Install
 
 **Install [`uv`](https://docs.astral.sh/uv/) first.** The plugin runs on a uv-managed Python, so uv is the only prerequisite. Without it, prompts run without recall and Codex shows "Atlaso needs uv. Install uv, then retry your prompt; memory will set up in the background."
