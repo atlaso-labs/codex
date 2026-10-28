@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.1.22] - 2026-10-27
+
+Faster memory on the first prompt after a break. After more than 10 minutes without a prompt, the plugin used to check your plan with the Atlaso server and only then ask it for memory: two trips to the server before the prompt. It now makes one trip. The server sends the plan check together with the memory, and the plugin uses the notes only if that check says this tool is still connected. When the Atlaso server does not answer in time, the search of notes on this device now uses only the main words of your prompt and has its own time limit, so the hook finishes in time, often with notes from this device, instead of being stopped with none. Each recall also writes one timing line on this device (stage names and milliseconds only, never any text from your prompts or notes) to `health/recall-timing.log` in Atlaso's folder. Nothing uploads it. `ATLASO_HOOK_TIMING=0` turns it off.
+
 ## [0.1.21] - 2026-10-24
 
 Atlaso keeps itself up to date. At most once a day, session start asks the Atlaso CLI to check for a newer release in the background; the hook returns at once and never waits on the network. The CLI checks a new release against its published checksums before it replaces itself, then updates this plugin through Codex's own `codex plugin marketplace upgrade` command. Atlaso never edits your Codex settings file. `atlaso update --off` or `ATLASO_NO_AUTO_UPDATE=1` turns it off.
